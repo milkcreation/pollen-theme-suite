@@ -3,10 +3,9 @@
 namespace Pollen\ThemeSuite\Query;
 
 use tiFy\Support\ParamsBag;
-use Pollen\ThemeSuite\Contracts\QueryPostComposing;
 
 /**
- * @mixin QueryPostComposing
+ * @mixin QueryPostComposingInterface
  */
 trait QueryPostComposingTrait
 {
