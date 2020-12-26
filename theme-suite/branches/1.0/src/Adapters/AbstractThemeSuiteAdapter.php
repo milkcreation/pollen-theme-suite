@@ -5,7 +5,7 @@ namespace Pollen\ThemeSuite\Adapters;
 use Pollen\ThemeSuite\Contracts\ThemeSuiteContract;
 use Pollen\ThemeSuite\ThemeSuiteAwareTrait;
 
-abstract class AbstractThemeSuiteAdapter implements ThemeSuiteAdapterInterface
+abstract class AbstractThemeSuiteAdapter implements AdapterInterface
 {
     use ThemeSuiteAwareTrait;
 

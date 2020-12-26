@@ -5,6 +5,6 @@ namespace Pollen\ThemeSuite\Adapters;
 /**
  * @mixin \Pollen\ThemeSuite\ThemeSuiteAwareTrait
  */
-interface ThemeSuiteAdapterInterface
+interface AdapterInterface
 {
 }

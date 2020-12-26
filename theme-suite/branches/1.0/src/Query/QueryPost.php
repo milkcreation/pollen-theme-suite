@@ -3,9 +3,8 @@
 namespace Pollen\ThemeSuite\Query;
 
 use tiFy\Wordpress\Query\QueryPost as BaseQueryPost;
-use Pollen\ThemeSuite\Contracts\QueryPostComposing;
 
-class QueryPost extends BaseQueryPost implements QueryPostComposing
+class QueryPost extends BaseQueryPost implements QueryPostComposingInterface
 {
     use QueryPostComposingTrait;
 }
