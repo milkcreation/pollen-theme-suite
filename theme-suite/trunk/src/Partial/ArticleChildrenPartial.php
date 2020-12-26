@@ -2,7 +2,7 @@
 
 namespace Pollen\ThemeSuite\Partial;
 
-use Pollen\ThemeSuite\Contracts\QueryPostComposing;
+use Pollen\ThemeSuite\Query\QueryPostComposingInterface;
 use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
 use tiFy\Wordpress\Query\QueryPost as post;
 
@@ -35,7 +35,7 @@ class ArticleChildrenPartial extends AbstractPartialDriver
                 return '';
             }
 
-            if ($article instanceof QueryPostComposing) {
+            if ($article instanceof QueryPostComposingInterface) {
                 $enabled = array_merge($article->getSingularComposing('enabled', []), $this->get('enabled', []));
             } else  {
                 $enabled = $this->get('enabled', []);
