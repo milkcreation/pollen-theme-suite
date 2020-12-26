@@ -6,7 +6,7 @@ use RuntimeException;
 use Psr\Container\ContainerInterface as Container;
 use tiFy\Contracts\Filesystem\LocalFilesystem;
 use tiFy\Contracts\Partial\Partial as PartialManagerContract;
-use Pollen\ThemeSuite\Adapters\ThemeSuiteAdapterInterface;
+use Pollen\ThemeSuite\Adapters\AdapterInterface;
 use Pollen\ThemeSuite\Metabox\Post\Composing\ArchiveMetabox;
 use Pollen\ThemeSuite\Metabox\Post\Composing\GlobalMetabox;
 use Pollen\ThemeSuite\Metabox\Post\Composing\SingularMetabox;
@@ -80,7 +80,7 @@ class ThemeSuite implements ThemeSuiteContract
 
     /**
      * Instance de l'adapteur associé
-     * @var ThemeSuiteAdapterInterface|null
+     * @var AdapterInterface|null
      */
     protected $adapter;
 
@@ -151,23 +151,23 @@ class ThemeSuite implements ThemeSuiteContract
      */
     public function config($key = null, $default = null)
     {
-        if (!isset($this->config) || is_null($this->config)) {
-            $this->config = new ParamsBag();
+        if (!isset($this->configBag) || is_null($this->configBag)) {
+            $this->configBag = new ParamsBag();
         }
 
         if (is_string($key)) {
-            return $this->config->get($key, $default);
+            return $this->configBag->get($key, $default);
         } elseif (is_array($key)) {
-            return $this->config->set($key);
+            return $this->configBag->set($key);
         } else {
-            return $this->config;
+            return $this->configBag;
         }
     }
 
     /**
      * @inheritDoc
      */
-    public function getAdapter(): ?ThemeSuiteAdapterInterface
+    public function getAdapter(): ?AdapterInterface
     {
         return $this->adapter;
     }
@@ -195,7 +195,7 @@ class ThemeSuite implements ThemeSuiteContract
     /**
      * @inheritDoc
      */
-    public function setAdapter(ThemeSuiteAdapterInterface $adapter): ThemeSuiteContract
+    public function setAdapter(AdapterInterface $adapter): ThemeSuiteContract
     {
         $this->adapter = $adapter;
 

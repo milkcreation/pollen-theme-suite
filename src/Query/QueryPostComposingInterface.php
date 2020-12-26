@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Pollen\ThemeSuite\Contracts;
+namespace Pollen\ThemeSuite\Query;
 
 use tiFy\Contracts\Support\ParamsBag;
 
-interface QueryPostComposing
+interface QueryPostComposingInterface
 {
 
     /**

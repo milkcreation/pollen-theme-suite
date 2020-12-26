@@ -3,7 +3,7 @@
 namespace Pollen\ThemeSuite\Contracts;
 
 use Psr\Container\ContainerInterface as Container;
-use Pollen\ThemeSuite\Adapters\ThemeSuiteAdapterInterface;
+use Pollen\ThemeSuite\Adapters\AdapterInterface;
 use tiFy\Contracts\Filesystem\LocalFilesystem;
 use tiFy\Contracts\Support\ParamsBag;
 
@@ -40,9 +40,9 @@ interface ThemeSuiteContract
     /**
      * Récupération de l'instance de l'adapteur.
      *
-     * @return ThemeSuiteAdapterInterface|null
+     * @return AdapterInterface|null
      */
-    public function getAdapter(): ?ThemeSuiteAdapterInterface;
+    public function getAdapter(): ?AdapterInterface;
 
     /**
      * Récupération de l'instance du gestionnaire d'injection de dépendances.
@@ -72,11 +72,11 @@ interface ThemeSuiteContract
     /**
      * Définition de l'adapteur associé.
      *
-     * @param ThemeSuiteAdapterInterface $adapter
+     * @param AdapterInterface $adapter
      *
      * @return static
      */
-    public function setAdapter(ThemeSuiteAdapterInterface $adapter): ThemeSuiteContract;
+    public function setAdapter(AdapterInterface $adapter): ThemeSuiteContract;
 
     /**
      * Définition des paramètres de configuration.
