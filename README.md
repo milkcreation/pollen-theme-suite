@@ -1,6 +1,6 @@
 # Theme Suite Component
 
-[![Latest Version](https://img.shields.io/badge/release-1.0.0-blue?style=for-the-badge)](https://www.presstify.com/components/theme-suite/)
+[![Latest Version](https://img.shields.io/badge/release-1.0.0-blue?style=for-the-badge)](https://www.presstify.com/pollen-solutions/theme-suite/)
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE.md)
 
 **Theme Suite** is an extended collection of partial drivers, metabox drivers ... dedicated to building apps.
