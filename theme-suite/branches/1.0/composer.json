@@ -1,0 +1,51 @@
+{
+  "name": "pollen-solutions/theme-suite",
+  "description": "Theme Suite Component",
+  "homepage": "https://www.presstify.com/components/theme-suite/",
+  "keywords": [
+    "pollen-solutions",
+    "components",
+    "theme suite",
+    "partial drivers",
+    "field drivers",
+    "metabox drivers"
+  ],
+  "time": "2020-12-26",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jordy Manner",
+      "email": "jordy@presstify.com",
+      "role": "Developper"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://composer.presstify.com/pollen-solutions/"
+    }
+  ],
+  "require": {
+    "composer/installers": "~1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pollen\\ThemeSuite\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Pollen\\ThemeSuite\\Test\\": "tests"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  }
+}
