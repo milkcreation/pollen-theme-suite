@@ -45,11 +45,18 @@ interface ThemeSuiteContract
     public function getAdapter(): ?AdapterInterface;
 
     /**
-     * Récupération de l'instance du gestionnaire d'injection de dépendances.
+     * Récupération de la liste des pilotes de boîtes de saisie.
      *
-     * @return Container|null
+     * @return array
      */
-    public function getContainer(): ?Container;
+    public function getMetaboxDrivers() : array;
+
+    /**
+     * Récupération de la liste des pilotes de portions d'affichage.
+     *
+     * @return array
+     */
+    public function getPartialDrivers() : array;
 
     /**
      * Récupération d'un service fourni par le conteneur d'injection de dépendance.

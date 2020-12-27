@@ -22,18 +22,24 @@ use Pollen\ThemeSuite\Contracts\ThemeSuiteContract;
 use tiFy\Support\Concerns\BootableTrait;
 use tiFy\Support\Concerns\ContainerAwareTrait;
 use tiFy\Support\ParamsBag;
-use tiFy\Support\Proxy\Metabox;
 use tiFy\Support\Proxy\Storage;
 
 class ThemeSuite implements ThemeSuiteContract
 {
-    use BootableTrait, ContainerAwareTrait;
+    use BootableTrait;
+    use ContainerAwareTrait;
 
     /**
      * Instance de la classe.
      * @var static|null
      */
     private static $instance;
+
+    /**
+     * Instance de l'adapteur associé
+     * @var AdapterInterface|null
+     */
+    private $adapter;
 
     /**
      * Instance du gestionnaire de configuration.
@@ -77,12 +83,6 @@ class ThemeSuite implements ThemeSuiteContract
      * @var LocalFilesystem|null
      */
     private $resources;
-
-    /**
-     * Instance de l'adapteur associé
-     * @var AdapterInterface|null
-     */
-    protected $adapter;
 
     /**
      * @param array $config
@@ -130,14 +130,6 @@ class ThemeSuite implements ThemeSuiteContract
                 }
             }
 
-            add_action('after_setup_theme', function () {
-                foreach ($this->metaboxDrivers as $alias => $abstract) {
-                    if ($this->getContainer()->has($abstract)) {
-                        Metabox::registerDriver($alias, $this->getContainer()->get($abstract));
-                    }
-                }
-            });
-
             $this->setBooted();
 
             events()->trigger('theme-suite.booted');
@@ -170,6 +162,22 @@ class ThemeSuite implements ThemeSuiteContract
     public function getAdapter(): ?AdapterInterface
     {
         return $this->adapter;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMetaboxDrivers() : array
+    {
+        return $this->metaboxDrivers;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPartialDrivers() : array
+    {
+        return $this->partialDrivers;
     }
 
     /**
