@@ -120,7 +120,7 @@ class ThemeSuite implements ThemeSuiteContract
     public function boot(): ThemeSuiteContract
     {
         if (!$this->isBooted()) {
-            events()->trigger('theme-suite.boot');
+            events()->trigger('theme-suite.booting', [$this]);
 
             foreach ($this->partialDrivers as $alias => $abstract) {
                 if ($this->containerHas($abstract)) {
@@ -132,7 +132,7 @@ class ThemeSuite implements ThemeSuiteContract
 
             $this->setBooted();
 
-            events()->trigger('theme-suite.booted');
+            events()->trigger('theme-suite.booted', [$this]);
         }
 
         return $this;
