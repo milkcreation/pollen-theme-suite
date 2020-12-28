@@ -2,15 +2,15 @@
 
 namespace Pollen\ThemeSuite\Partial;
 
-use tiFy\Contracts\Partial\Tag;
-use tiFy\Contracts\Partial\PartialDriver;
+use tiFy\Partial\Drivers\TagDriverInterface;
+use tiFy\Partial\PartialDriverInterface;
 
 class NavMenuPartial extends AbstractPartialDriver
 {
     /**
      * @inheritDoc
      */
-    public function parseParams(): PartialDriver
+    public function parseParams(): PartialDriverInterface
     {
         parent::parseParams();
 
@@ -38,7 +38,7 @@ class NavMenuPartial extends AbstractPartialDriver
                         'content' => $content,
                         'tag' => 'a'
                     ]);
-                } elseif ($content instanceof Tag) {
+                } elseif ($content instanceof TagDriverInterface) {
                     $content->set('attrs.class', ($class = $content->get('attrs.class'))
                         ? sprintf('%s NavMenu-itemLink', $class) : 'NavMenu-itemLink');
 

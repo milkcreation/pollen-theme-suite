@@ -2,8 +2,6 @@
 
 namespace Pollen\ThemeSuite\Metabox;
 
-use tiFy\Support\Proxy\Partial;
-
 class ImageGalleryMetabox extends AbstractMetaboxDriver
 {
     /**
@@ -50,7 +48,7 @@ class ImageGalleryMetabox extends AbstractMetaboxDriver
         $byRow = (int)$this->params('by_row');
 
         if (12 % $byRow !== 0) {
-            return Partial::get('notice', [
+            return $this->ts()->partialManager()->get('notice', [
                 'type'    => 'warning',
                 'content' => __('Le paramètre fourni [by_row] n\'est pas un multiple de 12', 'tify'),
             ])->render();

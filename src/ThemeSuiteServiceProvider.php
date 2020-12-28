@@ -4,7 +4,6 @@ namespace Pollen\ThemeSuite;
 
 use tiFy\Container\ServiceProvider;
 use tiFy\Contracts\Metabox\MetaboxDriver;
-use tiFy\Contracts\Partial\Partial as PartialManagerContract;
 use Pollen\ThemeSuite\Contracts\ThemeSuiteContract;
 use Pollen\ThemeSuite\Adapters\WordpressAdapter;
 use Pollen\ThemeSuite\Metabox\ImageGalleryMetabox;
@@ -18,6 +17,7 @@ use Pollen\ThemeSuite\Partial\ArticleFooterPartial;
 use Pollen\ThemeSuite\Partial\ArticleHeaderPartial;
 use Pollen\ThemeSuite\Partial\ArticleTitlePartial;
 use Pollen\ThemeSuite\Partial\NavMenuPartial;
+use tiFy\Partial\Contracts\PartialContract;
 use tiFy\Wordpress\Query\QueryPost as post;
 use WP_Post;
 
@@ -98,49 +98,49 @@ class ThemeSuiteServiceProvider extends ServiceProvider
         $this->getContainer()->add(ArticleBodyPartial::class, function () {
             return new ArticleBodyPartial(
                 $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialManagerContract::class)
+                $this->getContainer()->get(PartialContract::class)
             );
         });
 
         $this->getContainer()->add(ArticleCardPartial::class, function () {
             return new ArticleCardPartial(
                 $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialManagerContract::class)
+                $this->getContainer()->get(PartialContract::class)
             );
         });
 
         $this->getContainer()->add(ArticleChildrenPartial::class, function () {
             return new ArticleChildrenPartial(
                 $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialManagerContract::class)
+                $this->getContainer()->get(PartialContract::class)
             );
         });
 
         $this->getContainer()->add(ArticleFooterPartial::class, function () {
             return new ArticleFooterPartial(
                 $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialManagerContract::class)
+                $this->getContainer()->get(PartialContract::class)
             );
         });
 
         $this->getContainer()->add(ArticleHeaderPartial::class, function () {
             return new ArticleHeaderPartial(
                 $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialManagerContract::class)
+                $this->getContainer()->get(PartialContract::class)
             );
         });
 
         $this->getContainer()->add(ArticleTitlePartial::class, function () {
             return new ArticleTitlePartial(
                 $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialManagerContract::class)
+                $this->getContainer()->get(PartialContract::class)
             );
         });
 
         $this->getContainer()->add(NavMenuPartial::class, function () {
             return new NavMenuPartial(
                 $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialManagerContract::class)
+                $this->getContainer()->get(PartialContract::class)
             );
         });
     }

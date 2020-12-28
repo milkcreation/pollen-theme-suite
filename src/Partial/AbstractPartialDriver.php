@@ -2,10 +2,10 @@
 
 namespace Pollen\ThemeSuite\Partial;
 
-use tiFy\Contracts\Partial\Partial as PartialManager;
-use tiFy\Partial\PartialDriver;
 use Pollen\ThemeSuite\ThemeSuite as ThemeSuiteContract;
 use Pollen\ThemeSuite\ThemeSuiteAwareTrait;
+use tiFy\Partial\Contracts\PartialContract;
+use tiFy\Partial\PartialDriver;
 
 abstract class AbstractPartialDriver extends PartialDriver implements PartialDriverInterface
 {
@@ -13,9 +13,9 @@ abstract class AbstractPartialDriver extends PartialDriver implements PartialDri
 
     /**
      * @param ThemeSuiteContract $themeSuite
-     * @param PartialManager $partialManager
+     * @param PartialContract $partialManager
      */
-    public function __construct(ThemeSuiteContract $themeSuite, PartialManager $partialManager)
+    public function __construct(ThemeSuiteContract $themeSuite, PartialContract $partialManager)
     {
         $this->setThemeSuite($themeSuite);
 
