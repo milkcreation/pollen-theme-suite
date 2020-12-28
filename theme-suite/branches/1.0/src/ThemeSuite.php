@@ -4,8 +4,6 @@ namespace Pollen\ThemeSuite;
 
 use RuntimeException;
 use Psr\Container\ContainerInterface as Container;
-use tiFy\Contracts\Filesystem\LocalFilesystem;
-use tiFy\Contracts\Partial\Partial as PartialManagerContract;
 use Pollen\ThemeSuite\Adapters\AdapterInterface;
 use Pollen\ThemeSuite\Metabox\Post\Composing\ArchiveMetabox;
 use Pollen\ThemeSuite\Metabox\Post\Composing\GlobalMetabox;
@@ -19,6 +17,9 @@ use Pollen\ThemeSuite\Partial\ArticleHeaderPartial;
 use Pollen\ThemeSuite\Partial\ArticleTitlePartial;
 use Pollen\ThemeSuite\Partial\NavMenuPartial;
 use Pollen\ThemeSuite\Contracts\ThemeSuiteContract;
+use tiFy\Contracts\Filesystem\LocalFilesystem;
+use tiFy\Partial\Contracts\PartialContract;
+use tiFy\Partial\Partial;
 use tiFy\Support\Concerns\BootableTrait;
 use tiFy\Support\Concerns\ContainerAwareTrait;
 use tiFy\Support\ParamsBag;
@@ -85,6 +86,12 @@ class ThemeSuite implements ThemeSuiteContract
     private $resources;
 
     /**
+     * Instance du gestion de portions d'affichage.
+     * @var PartialContract
+     */
+    protected $partialManager;
+
+    /**
      * @param array $config
      * @param Container|null $container
      *
@@ -123,10 +130,10 @@ class ThemeSuite implements ThemeSuiteContract
             events()->trigger('theme-suite.booting', [$this]);
 
             foreach ($this->partialDrivers as $alias => $abstract) {
-                if ($this->containerHas($abstract)) {
-                    /** @var PartialManagerContract $partialManager */
-                    $partialManager = $this->getContainer()->get(PartialManagerContract::class);
-                    $partialManager->register($alias, $abstract);
+                if($this->containerHas($abstract)) {
+                    $this->partialManager()->register($alias, $abstract);
+                } elseif (class_exists($abstract)) {
+                    $this->partialManager()->register($alias, new $abstract($this, $this->partialManager()));
                 }
             }
 
@@ -191,6 +198,19 @@ class ThemeSuite implements ThemeSuiteContract
     /**
      * @inheritDoc
      */
+    public function partialManager(): PartialContract
+    {
+        if ($this->partialManager === null) {
+            $this->partialManager = $this->containerHas(PartialContract::class)
+                ? $this->containerGet(PartialContract::class) : new Partial();
+        }
+
+        return $this->partialManager;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function resources(?string $path = null)
     {
         if (!isset($this->resources) || is_null($this->resources)) {
@@ -216,6 +236,16 @@ class ThemeSuite implements ThemeSuiteContract
     public function setConfig(array $attrs): ThemeSuiteContract
     {
         $this->config($attrs);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setPartialManager(PartialContract $partialManager): ThemeSuiteContract
+    {
+        $this->partialManager = $partialManager;
 
         return $this;
     }

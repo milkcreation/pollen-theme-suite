@@ -1,11 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Contracts;
 
-use Psr\Container\ContainerInterface as Container;
 use Pollen\ThemeSuite\Adapters\AdapterInterface;
 use tiFy\Contracts\Filesystem\LocalFilesystem;
 use tiFy\Contracts\Support\ParamsBag;
+use tiFy\Partial\Contracts\PartialContract;
 
 /**
  * @mixin \tiFy\Support\Concerns\BootableTrait
@@ -49,14 +51,14 @@ interface ThemeSuiteContract
      *
      * @return array
      */
-    public function getMetaboxDrivers() : array;
+    public function getMetaboxDrivers(): array;
 
     /**
      * Récupération de la liste des pilotes de portions d'affichage.
      *
      * @return array
      */
-    public function getPartialDrivers() : array;
+    public function getPartialDrivers(): array;
 
     /**
      * Récupération d'un service fourni par le conteneur d'injection de dépendance.
@@ -66,6 +68,13 @@ interface ThemeSuiteContract
      * @return callable|object|string|null
      */
     public function getProvider(string $name);
+
+    /**
+     * Instance du gestionnaire de portions d'affichage.
+     *
+     * @return PartialContract
+     */
+    public function partialManager(): PartialContract;
 
     /**
      * Chemin absolu vers une ressources (fichier|répertoire).
@@ -93,4 +102,13 @@ interface ThemeSuiteContract
      * @return static
      */
     public function setConfig(array $attrs): ThemeSuiteContract;
+
+    /**
+     * Définition du gestionnaire de portion d'affichage.
+     *
+     * @param PartialContract $partialManager
+     *
+     * @return static
+     */
+    public function setPartialManager(PartialContract $partialManager): ThemeSuiteContract;
 }
