@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Contracts\Metabox\MetaboxView $this
+ * @var tiFy\Metabox\MetaboxViewInterface $this
  * @var WP_Post $wp_post
  * @var Pollen\ThemeSuite\Query\QueryPost $post
  */

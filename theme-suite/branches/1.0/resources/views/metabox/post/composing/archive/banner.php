@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Contracts\Metabox\MetaboxView $this
+ * @var tiFy\Metabox\MetaboxViewInterface $this
  * @var WP_Post $wp_post
  * @var Pollen\ThemeSuite\Query\QueryPost $post
  */
@@ -23,7 +23,7 @@
                 'width'   => 640,
                 'height'  => 360,
                 'size'    => 'composing-banner',
-                'name'    => $this->name() . '[banner_img]',
+                'name'    => $this->getName() . '[banner_img]',
                 'value'   => $post->getArchiveComposing('banner_img'),
             ]); ?>
         </td>

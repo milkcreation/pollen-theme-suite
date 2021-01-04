@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Metabox\Post\Composing;
 
-use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
+use tiFy\Metabox\MetaboxDriverInterface;
 use Pollen\ThemeSuite\Metabox\AbstractMetaboxDriver;
 use WP_Post;
 
@@ -11,19 +13,26 @@ class GlobalMetabox extends AbstractMetaboxDriver
     /**
      * @inheritDoc
      */
-    public function boot(): MetaboxDriverContract
+    protected $name = '_global_composing';
+
+    /**
+     * @inheritDoc
+     */
+    public function boot(): MetaboxDriverInterface
     {
         parent::boot();
 
-        add_action('add_meta_boxes', function () {
-            /** @var WP_Post|null $post */
-            global $post;
+        add_action(
+            'add_meta_boxes',
+            function () {
+                /** @var WP_Post|null $post */
+                global $post;
 
-            if ($post instanceof WP_Post) {
-                remove_meta_box('postimagediv', $post->post_type, 'side');
+                if ($post instanceof WP_Post) {
+                    remove_meta_box('postimagediv', $post->post_type, 'side');
+                }
             }
-        });
-
+        );
         return $this;
     }
 
@@ -32,23 +41,23 @@ class GlobalMetabox extends AbstractMetaboxDriver
      */
     public function defaultParams(): array
     {
-        return array_merge(parent::defaults(), [
-            'baseline'  => false,
-            'alt_title' => false,
-            'subtitle'  => false,
-            'thumbnail' => true
-        ]);
+        return array_merge(
+            parent::defaultParams(),
+            [
+                'baseline'  => false,
+                'alt_title' => false,
+                'subtitle'  => false,
+                'thumbnail' => true,
+            ]
+        );
     }
 
     /**
      * @inheritDoc
      */
-    public function defaults(): array
+    public function getTitle(): string
     {
-        return array_merge(parent::defaults(), [
-            'name'  => '_global_composing',
-            'title' => __('Compo. générale', 'tify'),
-        ]);
+        return $this->title ?? __('Compo. générale', 'tify');
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Contracts\Metabox\MetaboxView $this
+ * @var tiFy\Metabox\MetaboxViewInterface $this
  * @var WP_Post $wp_post
  * @var Pollen\ThemeSuite\Query\QueryPost $post
  */
@@ -11,7 +11,7 @@
         <th><?php _e('Activation de l\'affichage', 'tify'); ?></th>
         <td>
             <?php echo field('toggle-switch', [
-                'name'  => $this->name() . '[enabled][children]',
+                'name'  => $this->getName() . '[enabled][children]',
                 'value' => $post->getSingularComposing('enabled.children') ? 'on' : 'off',
             ]); ?>
         </td>

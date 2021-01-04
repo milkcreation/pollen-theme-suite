@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Contracts\Metabox\MetaboxView $this
+ * @var tiFy\Metabox\MetaboxViewInterface $this
  * @var WP_Post $wp_post
  * @var Pollen\ThemeSuite\Query\QueryPost $post
  */
@@ -13,7 +13,7 @@
                 'attrs' => [
                     'class' => 'widefat',
                 ],
-                'name'  => $this->name() . '[children_title]',
+                'name'  => $this->getName() . '[children_title]',
                 'value' => $post->getSingularComposing('children_title'),
             ]); ?>
         </td>

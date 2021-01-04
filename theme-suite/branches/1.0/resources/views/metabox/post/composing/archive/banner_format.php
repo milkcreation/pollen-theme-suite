@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Contracts\Metabox\MetaboxView $this
+ * @var tiFy\Metabox\MetaboxViewInterface $this
  * @var WP_Post $wp_post
  * @var Pollen\ThemeSuite\Query\QueryPost $post
  */
@@ -17,7 +17,7 @@
                     'id'          => 'ArchiveBannerAdjust-switcher',
                     'data-target' => '#ArchiveBannerAdjust-img',
                 ],
-                'name'  => $this->name() . '[enabled][banner_format]',
+                'name'  => $this->getName() . '[enabled][banner_format]',
                 'value' => $post->getArchiveComposing('enabled.banner_format') ? 'on' : 'off',
             ]); ?>
         </td>

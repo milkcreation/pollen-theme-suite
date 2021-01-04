@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Contracts\Metabox\MetaboxView $this
+ * @var tiFy\Metabox\MetaboxViewInterface $this
  * @var WP_Post $wp_post
  * @var Pollen\ThemeSuite\Query\QueryPost $post
  */
@@ -12,7 +12,7 @@
             'attrs' => [
                 'class' => 'widefat',
             ],
-            'name'  => $this->name() . '[subtitle]',
+            'name'  => $this->getName() . '[subtitle]',
             'value' => $post->getGlobalComposing('subtitle'),
         ]); ?>
     </td>

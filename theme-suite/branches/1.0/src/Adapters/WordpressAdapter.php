@@ -3,7 +3,6 @@
 namespace Pollen\ThemeSuite\Adapters;
 
 use Pollen\ThemeSuite\Contracts\ThemeSuiteContract;
-use tiFy\Support\Proxy\Metabox;
 
 class WordpressAdapter extends AbstractThemeSuiteAdapter
 {
@@ -24,16 +23,5 @@ class WordpressAdapter extends AbstractThemeSuiteAdapter
             // add_image_size('composing-banner-lg', 460, 259, false);
             // add_image_size('composing-banner-md', 290, 163, false);
         });
-
-        events()->listen('theme-suite.booted', function () {
-            add_action('after_setup_theme', function () {
-                foreach ($this->ts()->getMetaboxDrivers() as $alias => $abstract) {
-                    if ($this->ts()->containerHas($abstract)) {
-                        Metabox::registerDriver($alias, $this->ts()->containerGet($abstract));
-                    }
-                }
-            });
-        });
-
     }
 }
