@@ -7,11 +7,12 @@ namespace Pollen\ThemeSuite\Contracts;
 use Pollen\ThemeSuite\Adapters\AdapterInterface;
 use tiFy\Contracts\Filesystem\LocalFilesystem;
 use tiFy\Contracts\Support\ParamsBag;
-use tiFy\Partial\Contracts\PartialContract;
 
 /**
  * @mixin \tiFy\Support\Concerns\BootableTrait
  * @mixin \tiFy\Support\Concerns\ContainerAwareTrait
+ * @mixin \tiFy\Support\Concerns\MetaboxManagerAwareTrait
+ * @mixin \tiFy\Support\Concerns\PartialManagerAwareTrait
  */
 interface ThemeSuiteContract
 {
@@ -70,13 +71,6 @@ interface ThemeSuiteContract
     public function getProvider(string $name);
 
     /**
-     * Instance du gestionnaire de portions d'affichage.
-     *
-     * @return PartialContract
-     */
-    public function partialManager(): PartialContract;
-
-    /**
      * Chemin absolu vers une ressources (fichier|répertoire).
      *
      * @param string|null $path Chemin relatif vers la ressource.
@@ -102,13 +96,4 @@ interface ThemeSuiteContract
      * @return static
      */
     public function setConfig(array $attrs): ThemeSuiteContract;
-
-    /**
-     * Définition du gestionnaire de portion d'affichage.
-     *
-     * @param PartialContract $partialManager
-     *
-     * @return static
-     */
-    public function setPartialManager(PartialContract $partialManager): ThemeSuiteContract;
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Contracts\Partial\PartialView $this
+ * @var tiFy\Partial\PartialViewInterface $this
  */
 ?>
 <nav <?php echo $this->htmlAttrs(); ?>>

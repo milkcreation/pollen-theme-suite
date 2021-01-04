@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Contracts\Metabox\MetaboxView $this
+ * @var tiFy\Metabox\MetaboxViewInterface $this
  * @var WP_Post $wp_post
  * @var Pollen\ThemeSuite\Query\QueryPost $post
  */
@@ -14,7 +14,7 @@
                     'id'          => 'SingularHeader-switcher',
                     'data-target' => '#SingularHeader-customizer',
                 ],
-                'name'  => $this->name() . '[enabled][header]',
+                'name'  => $this->getName() . '[enabled][header]',
                 'value' => $post->getSingularComposing('enabled.header') ? 'on' : 'off',
             ]); ?>
         </td>
@@ -32,7 +32,7 @@
                 'size'    => 'composing-header',
                 'width'   => 1920,
                 'height'  => 1080,
-                'name'    => $this->name() . '[header_img]',
+                'name'    => $this->getName() . '[header_img]',
                 'value'   => $post->getSingularComposing('header_img'),
             ]); ?>
         </td>

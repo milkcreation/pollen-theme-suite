@@ -1,18 +1,18 @@
 <?php
 /**
- * @var tiFy\Contracts\Metabox\MetaboxView $this
+ * @var tiFy\Metabox\MetaboxViewInterface $this
  * @var WP_Post $wp_post
  * @var Pollen\ThemeSuite\Query\QueryPost $post
  */
 ?>
-<?php if ($this->params('header')) : ?>
+<?php if ($this->get('header')) : ?>
     <?php $this->insert('header', $this->all()); ?>
 <?php endif; ?>
 
-<?php if ($this->params('children') && $post->getType()->hierarchical) : ?>
+<?php if ($this->get('children') && $post->getType()->hierarchical) : ?>
     <?php $this->insert('children', $this->all()); ?>
 
-    <?php if ($this->params('children_title')) : ?>
+    <?php if ($this->get('children_title')) : ?>
         <?php $this->insert('children_title', $this->all()); ?>
     <?php endif; ?>
 <?php endif;

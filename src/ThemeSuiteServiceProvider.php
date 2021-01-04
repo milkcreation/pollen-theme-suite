@@ -1,9 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite;
 
 use tiFy\Container\ServiceProvider;
-use tiFy\Contracts\Metabox\MetaboxDriver;
 use Pollen\ThemeSuite\Contracts\ThemeSuiteContract;
 use Pollen\ThemeSuite\Adapters\WordpressAdapter;
 use Pollen\ThemeSuite\Metabox\ImageGalleryMetabox;
@@ -17,6 +18,8 @@ use Pollen\ThemeSuite\Partial\ArticleFooterPartial;
 use Pollen\ThemeSuite\Partial\ArticleHeaderPartial;
 use Pollen\ThemeSuite\Partial\ArticleTitlePartial;
 use Pollen\ThemeSuite\Partial\NavMenuPartial;
+use tiFy\Metabox\Contracts\MetaboxContract;
+use tiFy\Metabox\MetaboxDriverInterface;
 use tiFy\Partial\Contracts\PartialContract;
 use tiFy\Wordpress\Query\QueryPost as post;
 use WP_Post;
@@ -47,7 +50,7 @@ class ThemeSuiteServiceProvider extends ServiceProvider
         ImageGalleryMetabox::class,
         NavMenuPartial::class,
         SingularMetabox::class,
-        WordpressAdapter::class
+        WordpressAdapter::class,
     ];
 
     /**
@@ -55,11 +58,14 @@ class ThemeSuiteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        events()->listen('wp.booted', function () {
-            /** @var ThemeSuiteContract $themeSuite */
-            $themeSuite = $this->getContainer()->get(ThemeSuiteContract::class);
-            $themeSuite->setAdapter($this->getContainer()->get(WordpressAdapter::class))->boot();
-        });
+        events()->listen(
+            'wp.booted',
+            function () {
+                /** @var ThemeSuiteContract $themeSuite */
+                $themeSuite = $this->getContainer()->get(ThemeSuiteContract::class);
+                $themeSuite->setAdapter($this->getContainer()->get(WordpressAdapter::class))->boot();
+            }
+        );
     }
 
     /**
@@ -67,9 +73,12 @@ class ThemeSuiteServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->getContainer()->share(ThemeSuiteContract::class, function (): ThemeSuiteContract {
-            return new ThemeSuite(config('theme-suite', []), $this->getContainer());
-        });
+        $this->getContainer()->share(
+            ThemeSuiteContract::class,
+            function (): ThemeSuiteContract {
+                return new ThemeSuite(config('theme-suite', []), $this->getContainer());
+            }
+        );
 
         $this->registerAdapters();
         $this->registerPartialDrivers();
@@ -83,9 +92,12 @@ class ThemeSuiteServiceProvider extends ServiceProvider
      */
     public function registerAdapters(): void
     {
-        $this->getContainer()->share(WordpressAdapter::class, function () {
-            return new WordpressAdapter($this->getContainer()->get(ThemeSuiteContract::class));
-        });
+        $this->getContainer()->share(
+            WordpressAdapter::class,
+            function () {
+                return new WordpressAdapter($this->getContainer()->get(ThemeSuiteContract::class));
+            }
+        );
     }
 
     /**
@@ -95,54 +107,69 @@ class ThemeSuiteServiceProvider extends ServiceProvider
      */
     public function registerPartialDrivers(): void
     {
-        $this->getContainer()->add(ArticleBodyPartial::class, function () {
-            return new ArticleBodyPartial(
-                $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialContract::class)
-            );
-        });
-
-        $this->getContainer()->add(ArticleCardPartial::class, function () {
-            return new ArticleCardPartial(
-                $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialContract::class)
-            );
-        });
-
-        $this->getContainer()->add(ArticleChildrenPartial::class, function () {
-            return new ArticleChildrenPartial(
-                $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialContract::class)
-            );
-        });
-
-        $this->getContainer()->add(ArticleFooterPartial::class, function () {
-            return new ArticleFooterPartial(
-                $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialContract::class)
-            );
-        });
-
-        $this->getContainer()->add(ArticleHeaderPartial::class, function () {
-            return new ArticleHeaderPartial(
-                $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialContract::class)
-            );
-        });
-
-        $this->getContainer()->add(ArticleTitlePartial::class, function () {
-            return new ArticleTitlePartial(
-                $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialContract::class)
-            );
-        });
-
-        $this->getContainer()->add(NavMenuPartial::class, function () {
-            return new NavMenuPartial(
-                $this->getContainer()->get(ThemeSuiteContract::class),
-                $this->getContainer()->get(PartialContract::class)
-            );
-        });
+        $this->getContainer()->add(
+            ArticleBodyPartial::class,
+            function () {
+                return new ArticleBodyPartial(
+                    $this->getContainer()->get(ThemeSuiteContract::class),
+                    $this->getContainer()->get(PartialContract::class)
+                );
+            }
+        );
+        $this->getContainer()->add(
+            ArticleCardPartial::class,
+            function () {
+                return new ArticleCardPartial(
+                    $this->getContainer()->get(ThemeSuiteContract::class),
+                    $this->getContainer()->get(PartialContract::class)
+                );
+            }
+        );
+        $this->getContainer()->add(
+            ArticleChildrenPartial::class,
+            function () {
+                return new ArticleChildrenPartial(
+                    $this->getContainer()->get(ThemeSuiteContract::class),
+                    $this->getContainer()->get(PartialContract::class)
+                );
+            }
+        );
+        $this->getContainer()->add(
+            ArticleFooterPartial::class,
+            function () {
+                return new ArticleFooterPartial(
+                    $this->getContainer()->get(ThemeSuiteContract::class),
+                    $this->getContainer()->get(PartialContract::class)
+                );
+            }
+        );
+        $this->getContainer()->add(
+            ArticleHeaderPartial::class,
+            function () {
+                return new ArticleHeaderPartial(
+                    $this->getContainer()->get(ThemeSuiteContract::class),
+                    $this->getContainer()->get(PartialContract::class)
+                );
+            }
+        );
+        $this->getContainer()->add(
+            ArticleTitlePartial::class,
+            function () {
+                return new ArticleTitlePartial(
+                    $this->getContainer()->get(ThemeSuiteContract::class),
+                    $this->getContainer()->get(PartialContract::class)
+                );
+            }
+        );
+        $this->getContainer()->add(
+            NavMenuPartial::class,
+            function () {
+                return new NavMenuPartial(
+                    $this->getContainer()->get(ThemeSuiteContract::class),
+                    $this->getContainer()->get(PartialContract::class)
+                );
+            }
+        );
     }
 
     /**
@@ -152,32 +179,59 @@ class ThemeSuiteServiceProvider extends ServiceProvider
      */
     public function registerMetaboxDrivers(): void
     {
-        $this->getContainer()->share(ImageGalleryMetabox::class, function () {
-            return (new ImageGalleryMetabox())->setThemeSuite($this->getContainer()->get(ThemeSuiteContract::class));
-        });
+        $this->getContainer()->share(
+            ImageGalleryMetabox::class,
+            function () {
+                return new ImageGalleryMetabox(
+                    $this->getContainer()->get(ThemeSuiteContract::class),
+                    $this->getContainer()->get(MetaboxContract::class)
+                );
+            }
+        );
 
-        $this->getContainer()->share(ArchiveMetabox::class, function () {
-            return (new ArchiveMetabox())
-                ->setThemeSuite($this->getContainer()->get(ThemeSuiteContract::class))
-                ->setHandler(function (MetaboxDriver $box, WP_Post $wp_post) {
-                    $box->set('post', post::create($wp_post));
-                });
-        });
+        $this->getContainer()->share(
+            ArchiveMetabox::class,
+            function () {
+                return (new ArchiveMetabox(
+                    $this->getContainer()->get(ThemeSuiteContract::class),
+                    $this->getContainer()->get(MetaboxContract::class)
+                ))
+                    ->setHandler(
+                        function (MetaboxDriverInterface $box, WP_Post $wp_post) {
+                            $box->set('post', post::create($wp_post));
+                        }
+                    );
+            }
+        );
 
-        $this->getContainer()->share(GlobalMetabox::class, function () {
-            return (new GlobalMetabox())
-                ->setThemeSuite($this->getContainer()->get(ThemeSuiteContract::class))
-                ->setHandler(function (MetaboxDriver $box, WP_Post $wp_post) {
-                    $box->set('post', post::create($wp_post));
-                });
-        });
+        $this->getContainer()->share(
+            GlobalMetabox::class,
+            function () {
+                return (new GlobalMetabox(
+                    $this->getContainer()->get(ThemeSuiteContract::class),
+                    $this->getContainer()->get(MetaboxContract::class)
+                ))
+                    ->setHandler(
+                        function (MetaboxDriverInterface $box, WP_Post $wp_post) {
+                            $box->set('post', post::create($wp_post));
+                        }
+                    );
+            }
+        );
 
-        $this->getContainer()->share(SingularMetabox::class, function () {
-            return (new SingularMetabox())
-                ->setThemeSuite($this->getContainer()->get(ThemeSuiteContract::class))
-                ->setHandler(function (MetaboxDriver $box, WP_Post $wp_post) {
-                    $box->set('post', post::create($wp_post));
-                });
-        });
+        $this->getContainer()->share(
+            SingularMetabox::class,
+            function () {
+                return (new SingularMetabox(
+                    $this->getContainer()->get(ThemeSuiteContract::class),
+                    $this->getContainer()->get(MetaboxContract::class)
+                ))
+                    ->setHandler(
+                        function (MetaboxDriverInterface $box, WP_Post $wp_post) {
+                            $box->set('post', post::create($wp_post));
+                        }
+                    );
+            }
+        );
     }
 }

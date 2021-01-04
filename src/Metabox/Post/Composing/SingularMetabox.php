@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Metabox\Post\Composing;
 
@@ -9,25 +11,30 @@ class SingularMetabox extends AbstractMetaboxDriver
     /**
      * @inheritDoc
      */
+    protected $name = '_singular_composing';
+
+    /**
+     * @inheritDoc
+     */
     public function defaultParams(): array
     {
-        return array_merge(parent::defaults(), [
-            'header'         => true,
-            'children'       => false,
-            'children_title' => false,
-            'children_edit'  => false
-        ]);
+        return array_merge(
+            parent::defaultParams(),
+            [
+                'header'         => true,
+                'children'       => false,
+                'children_title' => false,
+                'children_edit'  => false,
+            ]
+        );
     }
 
     /**
      * @inheritDoc
      */
-    public function defaults(): array
+    public function getTitle(): string
     {
-        return array_merge(parent::defaults(), [
-            'name'  => '_singular_composing',
-            'title' => __('Compo. page de contenu', 'tify'),
-        ]);
+        return $this->title ?? __('Compo. page de contenu', 'tify');
     }
 
     /**
