@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Partial;
 
@@ -20,13 +22,5 @@ abstract class AbstractPartialDriver extends PartialDriver implements PartialDri
         $this->setThemeSuite($themeSuite);
 
         parent::__construct($partialManager);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function viewDirectory(): string
-    {
-        return $this->ts()->resources("views/partial/{$this->getAlias()}");
     }
 }

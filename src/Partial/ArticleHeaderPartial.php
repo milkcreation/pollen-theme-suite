@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Partial;
 
@@ -13,22 +15,28 @@ class ArticleHeaderPartial extends AbstractPartialDriver
      */
     public function defaultParams(): array
     {
-        return array_merge(parent::defaultParams(), [
-            /**
-             * @var bool
-             */
-            'enabled'    => false,
-            /**
-             * @var bool|array
-             */
-            'breadcrumb' => true,
-            /**
-             * @var int|object|false|null
-             */
-            'post'       => null,
-            'title'      => null,
-            'content'    => null,
-        ]);
+        return array_merge(
+            parent::defaultParams(),
+            [
+                /**
+                 * @var array|bool $enable
+                 */
+                'enabled'    => false,
+                /**
+                 * @var bool|array
+                 */
+                'breadcrumb' => true,
+                /**
+                 * @var int|object|false|null
+                 */
+                'post'       => null,
+                'title'      => null,
+                /**
+                 * @var bool|string|null
+                 */
+                'content'    => null,
+            ]
+        );
     }
 
     /**
@@ -39,48 +47,54 @@ class ArticleHeaderPartial extends AbstractPartialDriver
         $breadcrumb = $this->get('breadcrumb');
         $content = $this->get('content');
         $title = $this->get('title');
+        $post = $this->get('post');
 
         if ($breadcrumb !== false && !is_array($breadcrumb)) {
             $this->set('breadcrumb', []);
         }
 
-        if ($this->get('post') === false) {
-            if (! empty($content)) {
-                $this->set('attrs.class', $this->get('attrs.class') . ' ArticleHeader--with_content');
-            } else {
-                $content = false;
-            }
+        if (($post !== false) && ($post = $post instanceof QueryPostContract ? $post : post::create($post))) {
+            if ($post instanceof QueryPostComposingInterface) {
+                $enabled = $post->getSingularComposing('enabled', []);
 
+                if ($content === null) {
+                    $content = ($header = $post->getHeader()) && $enabled['header'] ? $header : false;
+                }
+            }
+            if ($content !== false) {
+                $this->set('attrs.class', $this->get('attrs.class') . ' ArticleHeader--with_content');
+            }
+            $title = compact('post');
+
+            $this->set(compact('post', 'content', 'title'));
+        } else {
+            if ($content !== false) {
+                if (($content === true) || ($content === null)) {
+                    $content = '';
+                }
+                $this->set('attrs.class', $this->get('attrs.class') . ' ArticleHeader--with_content');
+            }
             if (is_string($title)) {
-                $title =  [
+                $title = [
                     'content' => $title,
                     'post'    => false,
                 ];
             } elseif (is_array($title)) {
                 $title = array_merge(['post' => false], $title);
             }
-
             $this->set(compact('content', 'title'));
-        } elseif ($article = ($p = $this->get('post', null)) instanceof QueryPostContract ? $p : post::create($p)) {
-            if ($article instanceof QueryPostComposingInterface) {
-                $enabled = $article->getSingularComposing('enabled', []);
-
-                if (is_null($content)) {
-                    $content = ($header = $article->getHeader()) && $enabled['header'] ? $header : false;
-                }
-            }
-
-            if ($content !== false) {
-                $this->set('attrs.class', $this->get('attrs.class') . ' ArticleHeader--with_content');
-            }
-
-            $title = ['post' => $article];
-
-            $this->set(compact('article', 'content', 'title'));
         }
 
-        $this->set('enabled', $this->get('enabled') || !!$breadcrumb || !!$title || !!$content);
+        $this->set('enabled', !!$this->get('enabled') || !!$breadcrumb || !!$title || !!$content);
 
         return parent::render();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->ts()->resources("views/partial/article-header");
     }
 }

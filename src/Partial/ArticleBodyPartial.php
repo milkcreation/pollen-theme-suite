@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Partial;
 
@@ -13,13 +15,25 @@ class ArticleBodyPartial extends AbstractPartialDriver
      */
     public function defaultParams(): array
     {
-        return array_merge(parent::defaultParams(), [
-            /** @var int|object|false|null */
-            'post'    => null,
-            'enabled' => [
-                'content' => true,
-            ],
-        ]);
+        return array_merge(
+            parent::defaultParams(),
+            [
+                /**
+                 * @var array
+                 */
+                'enabled'        => [
+                    'content' => true,
+                ],
+                /**
+                 * @var bool
+                 */
+                'content-editor' => false,
+                /**
+                 * @var int|object|false|null $post
+                 */
+                'post'           => null,
+            ]
+        );
     }
 
     /**
@@ -27,26 +41,37 @@ class ArticleBodyPartial extends AbstractPartialDriver
      */
     public function render(): string
     {
-        if ($this->get('post') === false) {
-            $this->set('content', apply_filters('the_content', $this->get('content')));
+        $post = $this->get('post');
 
-            return parent::render();
-        } elseif ($article = ($p = $this->get('post', null)) instanceof QueryPostContract ? $p : post::create($p)) {
-            if ($article instanceof QueryPostComposingInterface) {
-                $enabled = array_merge($article->getSingularComposing('enabled', []), $this->get('enabled', []));
+        if (($post !== false) && $post = $post instanceof QueryPostContract ? $post : post::create($post)) {
+            if ($post instanceof QueryPostComposingInterface) {
+                $enabled = array_merge($post->getSingularComposing('enabled', []), $this->get('enabled', []));
             } else {
                 $enabled = $this->get('enabled', []);
             }
-
-            $this->set([
-                'article' => $article,
-                'content' => $enabled['content'] ? trim($article->getContent()) : '',
-                'enabled' => $enabled,
-            ]);
-
-            return parent::render();
+            $this->set(
+                [
+                    'content-editor' => true,
+                    'content'        => $enabled['content'] ? trim($post->getContent()) : '',
+                    'enabled'        => $enabled,
+                    'post'           => $post,
+                ]
+            );
+        } else {
+            $this->set(
+                [
+                    'content' => $this->get('content'),
+                ]
+            );
         }
+        return parent::render();
+    }
 
-        return '';
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->ts()->resources("views/partial/article-body");
     }
 }

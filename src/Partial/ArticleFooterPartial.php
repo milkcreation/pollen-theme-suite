@@ -28,16 +28,14 @@ class ArticleFooterPartial extends AbstractPartialDriver
     public function render(): string
     {
         $content = $this->get('content');
+        $post = $this->get('post');
 
-        if ($this->get('post') === false) {
-            return parent::render();
-        } elseif ($article = ($p = $this->get('post', null)) instanceof QueryPostContract ? $p : post::create($p)) {
-            if ($article instanceof QueryPostComposingInterface) {
-                $enabled = $article->getSingularComposing('enabled', []);
+        if (($post !== false) && ($post = $post instanceof QueryPostContract ? $post : post::create($post))) {
+            if ($post instanceof QueryPostComposingInterface) {
+                $enabled = $post->getSingularComposing('enabled', []);
 
                 if ($enabled['children']) {
-                    $children = $this->partialManager()->get('article-children', ['post' => $article])->render();
-
+                    $children = $this->partialManager()->get('article-children', compact('post'))->render();
                     if ($children) {
                         $this->set([
                             'children' => $children,
@@ -46,14 +44,18 @@ class ArticleFooterPartial extends AbstractPartialDriver
                     }
                 }
             }
-
-            $this->set([
-                'article' => $article,
-            ]);
+            $this->set(compact('enabled', 'post'));
         }
-
         $this->set('enabled', $this->get('enabled') || !!$content);
 
         return parent::render();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->ts()->resources("views/partial/article-footer");
     }
 }
