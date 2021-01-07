@@ -15,13 +15,19 @@ class ArticleCardPartial extends AbstractPartialDriver
     {
         return array_merge(parent::defaultParams(), [
             'excerpt' => 'teaser',
-            'post'    => null,
+            /**
+             * @var array
+             */
             'enabled' => [
                 'excerpt'  => true,
                 'readmore' => true,
                 'title'    => true,
                 'thumb'    => true,
             ],
+            /**
+             * @var int|object|false|null $post
+             */
+            'post'    => null,
         ]);
     }
 
@@ -30,14 +36,16 @@ class ArticleCardPartial extends AbstractPartialDriver
      */
     public function render(): string
     {
-        if ($article = ($p = $this->get('post', null)) instanceof QueryPostContract ? $p : post::create($p)) {
-            if ($article instanceof QueryPostComposingInterface) {
-                $enabled = array_merge($article->getArchiveComposing('enabled', []), $this->get('enabled', []));
+        $post = $this->get('post');
 
-                $this->set('thumbnail', $article->getBanner());
+        if (($post !== false) && ($post = $post instanceof QueryPostContract ? $post : post::create($post))) {
+            if ($post instanceof QueryPostComposingInterface) {
+                $enabled = array_merge($post->getArchiveComposing('enabled', []), $this->get('enabled', []));
+
+                $this->set('thumbnail', $post->getBanner());
             } else {
                 $enabled = $this->get('enabled', []);
-                $this->set('thumbnail', $article->getThumbnail('composing-banner'));
+                $this->set('thumbnail', $post->getThumbnail('composing-banner'));
             }
 
             if (!$this->get('thumbnail') && ($this->get('holder') !== false)) {
@@ -53,31 +61,41 @@ class ArticleCardPartial extends AbstractPartialDriver
                 }
                 $this->set('thumbnail', $holder);
             }
-
             if ($this->get('readmore') !== false) {
                 $readmore = $this->get('readmore', null);
                 if (!is_string($readmore)) {
-                    $readmore = $this->partialManager()->get('tag', array_merge([
-                        'attrs'   => [
-                            'class' => '%s ArticleCard-readmoreLink',
-                            'href'  => $article->getPermalink(),
-                            'title' => sprintf(__('Consulter %s', 'tify'), $article->getTitle(true)),
-                        ],
+                    $readmoreConf = array_merge([
+                        'attrs'   => [],
                         'content' => __('Lire la suite', 'tify'),
                         'tag'     => 'a',
-                    ], is_array($readmore) ? $readmore : []));
+                    ], is_array($readmore) ? $readmore : []);
+
+                    if (!isset($readmoreConf['attrs']['class'])) {
+                        $readmoreConf['attrs']['class'] = 'ArticleCard-readmoreLink';
+                    }
+                    if (!isset($readmoreConf['attrs']['href'])) {
+                        $readmoreConf['attrs']['href'] = $post->getPermalink();
+                    }
+                    if (!isset($readmoreConf['attrs']['title'])) {
+                        $readmoreConf['attrs']['title'] = sprintf(__('Consulter %s', 'tify'), $post->getTitle(true));
+                    }
+
+                    $readmore = $this->partialManager()->get('tag', $readmoreConf);
                 }
                 $this->set(compact('readmore'));
             }
-
-            $this->set([
-                'article' => $article,
-                'enabled' => $enabled,
-            ]);
+            $this->set(compact('post', 'enabled'));
 
             return parent::render();
         }
-
         return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->ts()->resources("views/partial/article-card");
     }
 }

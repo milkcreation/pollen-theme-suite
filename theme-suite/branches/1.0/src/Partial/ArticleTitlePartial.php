@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Partial;
 
@@ -13,14 +15,23 @@ class ArticleTitlePartial extends AbstractPartialDriver
      */
     public function defaultParams(): array
     {
-        return array_merge(parent::defaultParams(), [
-            'tag'     => 'h1',
-            'content' => null,
-            /**
-             * @var int|object|false|null
-             */
-            'post'    => null,
-        ]);
+        return array_merge(
+            parent::defaultParams(),
+            [
+                /**
+                 * @var string $tag
+                 */
+                'tag'     => 'h1',
+                /**
+                 * @var string|null
+                 */
+                'content' => null,
+                /**
+                 * @var int|object|false|null $post
+                 */
+                'post'    => null,
+            ]
+        );
     }
 
     /**
@@ -28,26 +39,32 @@ class ArticleTitlePartial extends AbstractPartialDriver
      */
     public function render(): string
     {
-        if ($this->get('post') === false) {
-            return parent::render();
-        } elseif ($article = ($p = $this->get('post', null)) instanceof QueryPostContract ? $p : post::create($p)) {
-            if ($article instanceof QueryPostComposingInterface) {
-                $enabled = array_merge($article->getSingularComposing('enabled', []), $this->get('enabled', []));
+        $post = $this->get('post');
+
+        if (($post !== false) && ($post = $post instanceof QueryPostContract ? $post : post::create($post))) {
+            if ($post instanceof QueryPostComposingInterface) {
+                $enabled = array_merge($post->getSingularComposing('enabled', []), $this->get('enabled', []));
             } else {
                 $enabled = $this->get('enabled', []);
             }
-
-            $this->set([
-                'article' => $article,
-                'before'  => $enabled['baseline'] ? $article->getBaseline() : false,
-                'content' => $article->getTitle(),
-                'after'   => $enabled['subtitle'] ? $article->getSubtitle() : false,
-                'enabled' => $enabled
-            ]);
-
-            return parent::render();
+            $this->set(
+                [
+                    'before'  => $enabled['baseline'] ? $post->getBaseline() : false,
+                    'content' => $post->getTitle(),
+                    'after'   => $enabled['subtitle'] ? $post->getSubtitle() : false,
+                    'enabled' => $enabled,
+                    'post'    => $post,
+                ]
+            );
         }
+        return parent::render();
+    }
 
-        return '';
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->ts()->resources("views/partial/article-title");
     }
 }

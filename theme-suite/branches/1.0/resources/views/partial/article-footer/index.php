@@ -1,7 +1,7 @@
 <?php
 /**
  * @var tiFy\Partial\PartialViewInterface $this
- * @var tiFy\Wordpress\Contracts\Query\QueryPost|null $article
+ * @var tiFy\Wordpress\Contracts\Query\QueryPost|null $post
  */
 ?>
 <?php if ($this->get('enabled', false)) : ?>
