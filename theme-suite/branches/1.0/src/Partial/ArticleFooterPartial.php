@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Partial;
 
-use Pollen\ThemeSuite\Query\QueryPostComposingInterface;
-use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
-use tiFy\Wordpress\Query\QueryPost as post;
+use Pollen\ThemeSuite\Query\WpPostQueryComposingInterface;
+use Pollen\WpPost\WpPostQuery as post;
+use Pollen\WpPost\WpPostQueryInterface;
 
 class ArticleFooterPartial extends AbstractPartialDriver
 {
@@ -13,13 +15,16 @@ class ArticleFooterPartial extends AbstractPartialDriver
      */
     public function defaultParams(): array
     {
-        return array_merge(parent::defaultParams(), [
-            /** @var bool */
-            'enabled' => false,
-            /** @var int|object|false|null */
-            'post'    => null,
-            'content' => null,
-        ]);
+        return array_merge(
+            parent::defaultParams(),
+            [
+                /** @var bool */
+                'enabled' => false,
+                /** @var int|object|false|null */
+                'post'    => null,
+                'content' => null,
+            ]
+        );
     }
 
     /**
@@ -30,23 +35,25 @@ class ArticleFooterPartial extends AbstractPartialDriver
         $content = $this->get('content');
         $post = $this->get('post');
 
-        if (($post !== false) && ($post = $post instanceof QueryPostContract ? $post : post::create($post))) {
-            if ($post instanceof QueryPostComposingInterface) {
+        if (($post !== false) && ($post = $post instanceof WpPostQueryInterface ? $post : post::create($post))) {
+            if ($post instanceof WpPostQueryComposingInterface) {
                 $enabled = $post->getSingularComposing('enabled', []);
 
                 if ($enabled['children']) {
-                    $children = $this->partialManager()->get('article-children', compact('post'))->render();
+                    $children = $this->partial('article-children', compact('post'))->render();
                     if ($children) {
-                        $this->set([
-                            'children' => $children,
-                            'enabled'  => true
-                        ]);
+                        $this->set(
+                            [
+                                'children' => $children,
+                                'enabled'  => true,
+                            ]
+                        );
                     }
                 }
             }
             $this->set(compact('enabled', 'post'));
         }
-        $this->set('enabled', $this->get('enabled') || !!$content);
+        $this->set('enabled', $this->get('enabled') || (bool)$content);
 
         return parent::render();
     }
@@ -56,6 +63,6 @@ class ArticleFooterPartial extends AbstractPartialDriver
      */
     public function viewDirectory(): string
     {
-        return $this->ts()->resources("views/partial/article-footer");
+        return $this->themeSuite()->resources('views/partial/article-footer');
     }
 }

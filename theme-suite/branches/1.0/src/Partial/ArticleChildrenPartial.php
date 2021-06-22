@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Partial;
 
-use Pollen\ThemeSuite\Query\QueryPostComposingInterface;
-use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
-use tiFy\Wordpress\Query\QueryPost as post;
+use Pollen\ThemeSuite\Query\WpPostQueryComposingInterface;
+use Pollen\WpPost\WpPostQuery as post;
+use Pollen\WpPost\WpPostQueryInterface;
 
 class ArticleChildrenPartial extends AbstractPartialDriver
 {
@@ -31,7 +31,7 @@ class ArticleChildrenPartial extends AbstractPartialDriver
                 'per_page'   => -1,
                 'paged'      => 1,
                 'query_args' => [],
-                'title'      => __('Autre contenu en relation', 'tify'),
+                'title'      => 'Autre contenu en relation',
             ]
         );
     }
@@ -43,11 +43,11 @@ class ArticleChildrenPartial extends AbstractPartialDriver
     {
         $post = $this->get('post');
 
-        if (($post !== false) && ($post = $post instanceof QueryPostContract ? $post : post::create($post))) {
+        if (($post !== false) && ($post = $post instanceof WpPostQueryInterface ? $post : post::create($post))) {
             if (!$post->isHierarchical()) {
                 return '';
             }
-            if ($post instanceof QueryPostComposingInterface) {
+            if ($post instanceof WpPostQueryComposingInterface) {
                 $enabled = array_merge($post->getSingularComposing('enabled', []), $this->get('enabled', []));
             } else {
                 $enabled = $this->get('enabled', []);
@@ -77,6 +77,6 @@ class ArticleChildrenPartial extends AbstractPartialDriver
      */
     public function viewDirectory(): string
     {
-        return $this->ts()->resources("views/partial/article-children");
+        return $this->themeSuite()->resources('views/partial/article-children');
     }
 }

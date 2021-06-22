@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Partial;
 
-use Pollen\ThemeSuite\Query\QueryPostComposingInterface;
-use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
-use tiFy\Wordpress\Query\QueryPost as post;
+use Pollen\ThemeSuite\Query\WpPostQueryComposingInterface;
+use Pollen\WpPost\WpPostQuery as post;
+use Pollen\WpPost\WpPostQueryInterface;
 
 class ArticleTitlePartial extends AbstractPartialDriver
 {
@@ -41,8 +41,8 @@ class ArticleTitlePartial extends AbstractPartialDriver
     {
         $post = $this->get('post');
 
-        if (($post !== false) && ($post = $post instanceof QueryPostContract ? $post : post::create($post))) {
-            if ($post instanceof QueryPostComposingInterface) {
+        if (($post !== false) && ($post = $post instanceof WpPostQueryInterface ? $post : post::create($post))) {
+            if ($post instanceof WpPostQueryComposingInterface) {
                 $enabled = array_merge($post->getSingularComposing('enabled', []), $this->get('enabled', []));
             } else {
                 $enabled = $this->get('enabled', []);
@@ -65,6 +65,6 @@ class ArticleTitlePartial extends AbstractPartialDriver
      */
     public function viewDirectory(): string
     {
-        return $this->ts()->resources("views/partial/article-title");
+        return $this->themeSuite()->resources("views/partial/article-title");
     }
 }

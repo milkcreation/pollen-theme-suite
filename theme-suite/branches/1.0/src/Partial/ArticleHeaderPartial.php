@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Partial;
 
-use Pollen\ThemeSuite\Query\QueryPostComposingInterface;
-use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
-use tiFy\Wordpress\Query\QueryPost as post;
+use Pollen\ThemeSuite\Query\WpPostQueryComposingInterface;
+use Pollen\WpPost\WpPostQuery as post;
+use Pollen\WpPost\WpPostQueryInterface;
 
 class ArticleHeaderPartial extends AbstractPartialDriver
 {
@@ -53,8 +53,8 @@ class ArticleHeaderPartial extends AbstractPartialDriver
             $this->set('breadcrumb', []);
         }
 
-        if (($post !== false) && ($post = $post instanceof QueryPostContract ? $post : post::create($post))) {
-            if ($post instanceof QueryPostComposingInterface) {
+        if (($post !== false) && ($post = $post instanceof WpPostQueryInterface ? $post : post::create($post))) {
+            if ($post instanceof WpPostQueryComposingInterface) {
                 $enabled = $post->getSingularComposing('enabled', []);
 
                 if ($content === null) {
@@ -95,6 +95,6 @@ class ArticleHeaderPartial extends AbstractPartialDriver
      */
     public function viewDirectory(): string
     {
-        return $this->ts()->resources("views/partial/article-header");
+        return $this->themeSuite()->resources('views/partial/article-header');
     }
 }

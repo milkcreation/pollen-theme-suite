@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Metabox\MetaboxViewInterface $this
+ * @var Pollen\Metabox\MetaboxTemplate $this
  */
 ?>
 <h3><?php _e('Images', 'tify'); ?></h3>

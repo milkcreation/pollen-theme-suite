@@ -1,31 +1,36 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Adapters;
 
-use Pollen\ThemeSuite\Contracts\ThemeSuiteContract;
-use Pollen\ThemeSuite\ThemeSuiteAwareTrait;
+use Pollen\ThemeSuite\ThemeSuiteInterface;
+use Pollen\ThemeSuite\ThemeSuiteProxy;
 
 abstract class AbstractThemeSuiteAdapter implements AdapterInterface
 {
-    use ThemeSuiteAwareTrait;
+    use ThemeSuiteProxy;
 
     /**
      * Liste des portions d'affichage par défaut.
-     * @var string[][]
      */
-    protected $defaultPartials = [];
+    protected array $defaultPartials = [];
 
     /**
      * Liste des fournisseurs de services par défaut.
-     * @var string[][]
      */
-    protected $defaultProviders = [];
+    protected array $defaultProviders = [];
 
     /**
-     * @param ThemeSuiteContract $themeSuiteManager
+     * @param ThemeSuiteInterface $themeSuite
      */
-    public function __construct(ThemeSuiteContract $themeSuiteManager)
+    public function __construct(ThemeSuiteInterface $themeSuite)
     {
-        $this->setThemeSuite($themeSuiteManager);
+        $this->setThemeSuite($themeSuite);
     }
+
+    /**
+     * @inheritDoc
+     */
+    abstract public function boot(): void;
 }
