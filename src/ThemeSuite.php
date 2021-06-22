@@ -2,8 +2,11 @@
 
 namespace Pollen\ThemeSuite;
 
-use RuntimeException;
-use Psr\Container\ContainerInterface as Container;
+use Pollen\Support\Concerns\ConfigBagAwareTrait;
+use Pollen\Support\Concerns\ResourcesAwareTrait;
+use Pollen\Support\Exception\ManagerRuntimeException;
+use Pollen\Support\Proxy\ContainerProxy;
+use Pollen\Support\Proxy\PartialProxy;
 use Pollen\ThemeSuite\Adapters\AdapterInterface;
 use Pollen\ThemeSuite\Metabox\Post\Composing\ArchiveMetabox;
 use Pollen\ThemeSuite\Metabox\Post\Composing\GlobalMetabox;
@@ -16,51 +19,36 @@ use Pollen\ThemeSuite\Partial\ArticleFooterPartial;
 use Pollen\ThemeSuite\Partial\ArticleHeaderPartial;
 use Pollen\ThemeSuite\Partial\ArticleTitlePartial;
 use Pollen\ThemeSuite\Partial\NavMenuPartial;
-use Pollen\ThemeSuite\Contracts\ThemeSuiteContract;
-use tiFy\Contracts\Filesystem\LocalFilesystem;
-use tiFy\Support\Concerns\BootableTrait;
-use tiFy\Support\Concerns\ContainerAwareTrait;
-use tiFy\Support\Concerns\MetaboxManagerAwareTrait;
-use tiFy\Support\Concerns\PartialManagerAwareTrait;
-use tiFy\Support\ParamsBag;
-use tiFy\Support\Proxy\Storage;
+use Pollen\Support\Concerns\BootableTrait;
+use Psr\Container\ContainerInterface as Container;
 
-class ThemeSuite implements ThemeSuiteContract
+class ThemeSuite implements ThemeSuiteInterface
 {
     use BootableTrait;
-    use ContainerAwareTrait;
-    use MetaboxManagerAwareTrait;
-    use PartialManagerAwareTrait;
+    use ContainerProxy;
+    use ConfigBagAwareTrait;
+    use PartialProxy;
+    use ResourcesAwareTrait;
 
     /**
      * Instance de la classe.
-     * @var static|null
      */
-    private static $instance;
+    private static ?ThemeSuiteInterface $instance = null;
 
     /**
      * Instance de l'adapteur associé
-     * @var AdapterInterface|null
      */
-    private $adapter;
-
-    /**
-     * Instance du gestionnaire de configuration.
-     * @var ParamsBag
-     */
-    private $configBag;
+    private ?AdapterInterface $adapter;
 
     /**
      * Liste des services par défaut fournis par conteneur d'injection de dépendances.
-     * @var array
      */
-    private $defaultProviders = [];
+    private array $defaultProviders = [];
 
     /**
      * Liste des pilotes de métabox.
-     * @var array
      */
-    private $partialDrivers = [
+    private array $partialDrivers = [
         'article-body'     => ArticleBodyPartial::class,
         'article-card'     => ArticleCardPartial::class,
         'article-children' => ArticleChildrenPartial::class,
@@ -72,9 +60,8 @@ class ThemeSuite implements ThemeSuiteContract
 
     /**
      * Liste des pilotes de métabox.
-     * @var array
      */
-    private $metaboxDrivers = [
+    private array $metaboxDrivers = [
         'image-gallery'      => ImageGalleryMetabox::class,
         'archive-composing'  => ArchiveMetabox::class,
         'global-composing'   => GlobalMetabox::class,
@@ -82,16 +69,8 @@ class ThemeSuite implements ThemeSuiteContract
     ];
 
     /**
-     * Instance du gestionnaire des ressources
-     * @var LocalFilesystem|null
-     */
-    private $resources;
-
-    /**
      * @param array $config
      * @param Container|null $container
-     *
-     * @return void
      */
     public function __construct(array $config = [], Container $container = null)
     {
@@ -107,32 +86,35 @@ class ThemeSuite implements ThemeSuiteContract
     }
 
     /**
-     * @inheritDoc
+     * Récupération de l'instance principale.
+     *
+     * @return static
      */
-    public static function instance(): ThemeSuiteContract
+    public static function getInstance():  ThemeSuiteInterface
     {
         if (self::$instance instanceof self) {
             return self::$instance;
         }
-        throw new RuntimeException(sprintf('Unavailable %s instance', __CLASS__));
+        throw new ManagerRuntimeException(sprintf('Unavailable [%s] instance', __CLASS__));
     }
 
     /**
      * @inheritDoc
      */
-    public function boot(): ThemeSuiteContract
+    public function boot(): ThemeSuiteInterface
     {
         if (!$this->isBooted()) {
-            events()->trigger('theme-suite.booting', [$this]);
+            //events()->trigger('theme-suite.booting', [$this]);
 
             foreach ($this->partialDrivers as $alias => $abstract) {
-                if($this->containerHas($abstract)) {
-                    $this->partialManager()->register($alias, $abstract);
+                if ($this->containerHas($abstract)) {
+                    $this->partial()->register($alias, $abstract);
                 } elseif (class_exists($abstract)) {
-                    $this->partialManager()->register($alias, new $abstract($this, $this->partialManager()));
+                    $this->partial()->register($alias, new $abstract($this, $this->partial()));
                 }
             }
 
+            /* * /
             foreach ($this->metaboxDrivers as $alias => $abstract) {
                 if($this->containerHas($abstract)) {
                     $this->metaboxManager()->registerDriver($alias, $abstract);
@@ -140,30 +122,14 @@ class ThemeSuite implements ThemeSuiteContract
                     $this->metaboxManager()->registerDriver($alias, new $abstract($this, $this->metaboxManager()));
                 }
             }
+            /**/
+
             $this->setBooted();
 
-            events()->trigger('theme-suite.booted', [$this]);
+            //events()->trigger('theme-suite.booted', [$this]);
         }
 
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function config($key = null, $default = null)
-    {
-        if (!isset($this->configBag) || is_null($this->configBag)) {
-            $this->configBag = new ParamsBag();
-        }
-
-        if (is_string($key)) {
-            return $this->configBag->get($key, $default);
-        } elseif (is_array($key)) {
-            return $this->configBag->set($key);
-        } else {
-            return $this->configBag;
-        }
     }
 
     /**
@@ -195,37 +161,15 @@ class ThemeSuite implements ThemeSuiteContract
      */
     public function getProvider(string $name)
     {
-        return $this->config("providers.{$name}", $this->defaultProviders[$name] ?? null);
+        return $this->config("providers.$name", $this->defaultProviders[$name] ?? null);
     }
 
     /**
      * @inheritDoc
      */
-    public function resources(?string $path = null)
-    {
-        if (!isset($this->resources) || is_null($this->resources)) {
-            $this->resources = Storage::local(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'resources');
-        }
-
-        return is_null($path) ? $this->resources : $this->resources->path($path);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setAdapter(AdapterInterface $adapter): ThemeSuiteContract
+    public function setAdapter(AdapterInterface $adapter): ThemeSuiteInterface
     {
         $this->adapter = $adapter;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setConfig(array $attrs): ThemeSuiteContract
-    {
-        $this->config($attrs);
 
         return $this;
     }

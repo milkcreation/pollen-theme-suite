@@ -1,7 +1,7 @@
 <?php
 /**
- * @var tiFy\Partial\PartialViewInterface $this
- * @var tiFy\Wordpress\Contracts\Query\QueryPost|null $post
+ * @var Pollen\Partial\PartialTemplate $this
+ * @var Pollen\WpPost\WpPostQuery|null $post
  */
 ?>
 <div class="ArticleHeader-breadcrumb">

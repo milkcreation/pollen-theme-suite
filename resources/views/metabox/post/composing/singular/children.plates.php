@@ -1,8 +1,8 @@
 <?php
 /**
- * @var tiFy\Metabox\MetaboxViewInterface $this
+ * @var Pollen\Metabox\MetaboxTemplate $this
  * @var WP_Post $wp_post
- * @var Pollen\ThemeSuite\Query\QueryPost $post
+ * @var Pollen\ThemeSuite\Query\WpPostQuery $post
  */
 ?>
 <h3><?php _e('Liste des publications apparentées', 'tify'); ?></h3>

@@ -1,6 +1,6 @@
 {
   "name": "pollen-solutions/theme-suite",
-  "description": "Theme Suite Component",
+  "description": "Pollen Theme Suite Component",
   "homepage": "https://www.presstify.com/pollen-solutions/theme-suite/",
   "keywords": [
     "pollen-solutions",
@@ -10,7 +10,7 @@
     "field drivers",
     "metabox drivers"
   ],
-  "time": "2021-01-07",
+  "time": "2021-06-22",
   "license": "MIT",
   "authors": [
     {
@@ -26,7 +26,8 @@
     }
   ],
   "require": {
-    "composer/installers": "~1.0"
+    "pollen-solutions/support": "^1.0",
+    "pollen-solutions/wp-post": "^1.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0"

@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Metabox\MetaboxViewInterface $this
+ * @var Pollen\Metabox\MetaboxTemplate $this
  */
 ?>
 <div <?php echo $this->htmlAttrs(); ?>>

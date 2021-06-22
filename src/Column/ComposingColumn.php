@@ -1,15 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Column;
 
-use tiFy\Column\AbstractColumnDisplayPostTypeController;
 use Pollen\ThemeSuite\Query\QueryPost as post;
-use Pollen\ThemeSuite\ThemeSuiteAwareTrait;
 
 class ComposingColumn extends AbstractColumnDisplayPostTypeController
 {
-    use ThemeSuiteAwareTrait;
-
     /**
      * @inheritDoc
      */

@@ -1,16 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Partial;
 
-use tiFy\Partial\Drivers\TagDriverInterface;
-use tiFy\Partial\PartialDriverInterface;
+use Pollen\Partial\Drivers\TagDriverInterface;
 
 class NavMenuPartial extends AbstractPartialDriver
 {
     /**
      * @inheritDoc
      */
-    public function parseParams(): PartialDriverInterface
+    public function parseParams(): void
     {
         parent::parseParams();
 
@@ -29,7 +30,7 @@ class NavMenuPartial extends AbstractPartialDriver
                     $content = $item['label'] ?? '';
                     $title = $item['title'] ?? basename($href);
 
-                    $_item['content'] = $this->partialManager()->get('tag', [
+                    $_item['content'] = $this->partial('tag', [
                         'attrs' => [
                             'class' => 'NavMenu-itemLink',
                             'href'  => $href,
@@ -50,7 +51,6 @@ class NavMenuPartial extends AbstractPartialDriver
                 return $_item;
             }, $items));
         }
-        return $this;
     }
 
     /**
@@ -58,6 +58,6 @@ class NavMenuPartial extends AbstractPartialDriver
      */
     public function viewDirectory(): string
     {
-        return $this->ts()->resources("views/partial/nav-menu");
+        return $this->themeSuite()->resources('views/partial/nav-menu');
     }
 }

@@ -1,67 +1,60 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Query;
 
-use tiFy\Support\ParamsBag;
+use Pollen\Support\ParamsBag;
 
 /**
- * @mixin QueryPostComposingInterface
+ * @mixin WpPostQueryComposingInterface
  */
-trait QueryPostComposingTrait
+trait WpPostQueryComposingTrait
 {
     /**
      * Instance des paramètres d'affichage des pages de flux.
-     * @var ParamsBag|null
      */
-    protected $archiveComposing;
+    protected ?ParamsBag $archiveComposing;
 
     /**
      * Clé de qualification de la composition des pages de flux.
-     * @var string
      */
-    protected $archiveComposingKey = '_archive_composing';
+    protected string $archiveComposingKey = '_archive_composing';
 
     /**
      * Instance des paramètres d'affichage généraux.
-     * @var ParamsBag|null
      */
-    protected $globalComposing;
+    protected ?ParamsBag $globalComposing;
 
     /**
      * Clé de qualification de la composition générale.
-     * @var string
      */
-    protected $globalComposingKey = '_global_composing';
+    protected string $globalComposingKey = '_global_composing';
 
     /**
      * Instance des paramètres d'affichage de la page de contenu.
-     * @var ParamsBag|null
      */
-    protected $singularComposing;
+    protected ?ParamsBag $singularComposing;
 
     /**
      * Clé de qualification de la composition d'une page de contenu.
-     * @var string
      */
-    protected $singularComposingKey = '_singular_composing';
+    protected string $singularComposingKey = '_singular_composing';
 
     /**
      * Paramètres par défaut des pages de contenu.
-     * @var array
      */
-    protected $defaultsArchiveComposing = [];
+    protected array $defaultsArchiveComposing = [];
 
     /**
      * Paramètres par défaut généraux.
-     * @var array
      */
-    protected $defaultsGlobalComposing = [];
+    protected array $defaultsGlobalComposing = [];
 
     /**
      * Paramètres par défaut des pages de contenu.
-     * @var array
      */
-    protected $defaultsSingularComposing = [];
+    protected array $defaultsSingularComposing = [];
 
     /**
      * @inheritDoc
@@ -84,7 +77,7 @@ trait QueryPostComposingTrait
             });
             $params['enabled'] = $enabled;
 
-            $this->archiveComposing = (new ParamsBag())->set($params);
+            $this->archiveComposing = new ParamsBag($params);
         }
 
         return is_null($key) ? $this->archiveComposing : $this->archiveComposing->get($key, $default);
@@ -105,7 +98,8 @@ trait QueryPostComposingTrait
     {
         if (!$id = $this->getArchiveComposing('banner_img', 0)) {
             return $this->getThumbnail('composing-banner', $attrs);
-        } elseif ($img = wp_get_attachment_image($id, 'composing-banner', false, $attrs)) {
+        }
+        if ($img = wp_get_attachment_image($id, 'composing-banner', false, $attrs)) {
             return $img;
         }
 
@@ -146,7 +140,7 @@ trait QueryPostComposingTrait
             });
             $params['enabled'] = $enabled;
 
-            $this->globalComposing = (new ParamsBag())->set($params);
+            $this->globalComposing = new ParamsBag($params);
         }
 
         return is_null($key) ? $this->globalComposing : $this->globalComposing->get($key, $default);
@@ -159,7 +153,9 @@ trait QueryPostComposingTrait
     {
         if (!$id = $this->getSingularComposing('header_img', 0)) {
             return $this->getThumbnail('composing-header', $attrs);
-        } elseif ($img = wp_get_attachment_image($id, 'composing-header', false, $attrs)) {
+        }
+
+        if ($img = wp_get_attachment_image($id, 'composing-header', false, $attrs)) {
             return $img;
         }
 
@@ -196,7 +192,7 @@ trait QueryPostComposingTrait
             });
             $params['enabled'] = $enabled;
 
-            $this->singularComposing = (new ParamsBag())->set($params);
+            $this->singularComposing = new ParamsBag($params);
         }
 
         return is_null($key) ? $this->singularComposing : $this->singularComposing->get($key, $default);

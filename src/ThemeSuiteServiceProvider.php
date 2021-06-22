@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Pollen\ThemeSuite;
 
-use tiFy\Container\ServiceProvider;
-use Pollen\ThemeSuite\Contracts\ThemeSuiteContract;
+use Pollen\Container\BootableServiceProvider;
+use Pollen\Partial\PartialManagerInterface;
 use Pollen\ThemeSuite\Adapters\WordpressAdapter;
 use Pollen\ThemeSuite\Metabox\ImageGalleryMetabox;
 use Pollen\ThemeSuite\Metabox\Post\Composing\ArchiveMetabox;
@@ -18,13 +18,8 @@ use Pollen\ThemeSuite\Partial\ArticleFooterPartial;
 use Pollen\ThemeSuite\Partial\ArticleHeaderPartial;
 use Pollen\ThemeSuite\Partial\ArticleTitlePartial;
 use Pollen\ThemeSuite\Partial\NavMenuPartial;
-use tiFy\Metabox\Contracts\MetaboxContract;
-use tiFy\Metabox\MetaboxDriverInterface;
-use tiFy\Partial\Contracts\PartialContract;
-use tiFy\Wordpress\Query\QueryPost as post;
-use WP_Post;
 
-class ThemeSuiteServiceProvider extends ServiceProvider
+class ThemeSuiteServiceProvider extends BootableServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.
@@ -32,7 +27,6 @@ class ThemeSuiteServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $provides = [
-        ThemeSuiteContract::class,
         ArticleBodyPartial::class,
         ArticleCardPartial::class,
         ArticleChildrenPartial::class,
@@ -50,39 +44,37 @@ class ThemeSuiteServiceProvider extends ServiceProvider
         ImageGalleryMetabox::class,
         NavMenuPartial::class,
         SingularMetabox::class,
+        ThemeSuiteInterface::class,
         WordpressAdapter::class,
     ];
 
     /**
      * @inheritDoc
      */
-    public function boot()
+    public function boot(): void
     {
-        events()->listen(
-            'wp.booted',
-            function () {
-                /** @var ThemeSuiteContract $themeSuite */
-                $themeSuite = $this->getContainer()->get(ThemeSuiteContract::class);
-                $themeSuite->setAdapter($this->getContainer()->get(WordpressAdapter::class))->boot();
-            }
-        );
+        /** @var ThemeSuiteInterface $themeSuite */
+        if (defined('WPINC')) {
+            $themeSuite = $this->getContainer()->get(ThemeSuiteInterface::class);
+            $themeSuite->setAdapter($this->getContainer()->get(WordpressAdapter::class))->boot();
+        }
     }
 
     /**
      * @inheritDoc
      */
-    public function register()
+    public function register(): void
     {
         $this->getContainer()->share(
-            ThemeSuiteContract::class,
-            function (): ThemeSuiteContract {
-                return new ThemeSuite(config('theme-suite', []), $this->getContainer());
+            ThemeSuiteInterface::class,
+            function (): ThemeSuiteInterface {
+                return new ThemeSuite([], $this->getContainer());
             }
         );
 
         $this->registerAdapters();
         $this->registerPartialDrivers();
-        $this->registerMetaboxDrivers();
+        //$this->registerMetaboxDrivers();
     }
 
     /**
@@ -95,7 +87,7 @@ class ThemeSuiteServiceProvider extends ServiceProvider
         $this->getContainer()->share(
             WordpressAdapter::class,
             function () {
-                return new WordpressAdapter($this->getContainer()->get(ThemeSuiteContract::class));
+                return new WordpressAdapter($this->getContainer()->get(ThemeSuiteInterface::class));
             }
         );
     }
@@ -111,17 +103,18 @@ class ThemeSuiteServiceProvider extends ServiceProvider
             ArticleBodyPartial::class,
             function () {
                 return new ArticleBodyPartial(
-                    $this->getContainer()->get(ThemeSuiteContract::class),
-                    $this->getContainer()->get(PartialContract::class)
+                    $this->getContainer()->get(ThemeSuiteInterface::class),
+                    $this->getContainer()->get(PartialManagerInterface::class)
                 );
             }
         );
+
         $this->getContainer()->add(
             ArticleCardPartial::class,
             function () {
                 return new ArticleCardPartial(
-                    $this->getContainer()->get(ThemeSuiteContract::class),
-                    $this->getContainer()->get(PartialContract::class)
+                    $this->getContainer()->get(ThemeSuiteInterface::class),
+                    $this->getContainer()->get(PartialManagerInterface::class)
                 );
             }
         );
@@ -129,8 +122,8 @@ class ThemeSuiteServiceProvider extends ServiceProvider
             ArticleChildrenPartial::class,
             function () {
                 return new ArticleChildrenPartial(
-                    $this->getContainer()->get(ThemeSuiteContract::class),
-                    $this->getContainer()->get(PartialContract::class)
+                    $this->getContainer()->get(ThemeSuiteInterface::class),
+                    $this->getContainer()->get(PartialManagerInterface::class)
                 );
             }
         );
@@ -138,8 +131,8 @@ class ThemeSuiteServiceProvider extends ServiceProvider
             ArticleFooterPartial::class,
             function () {
                 return new ArticleFooterPartial(
-                    $this->getContainer()->get(ThemeSuiteContract::class),
-                    $this->getContainer()->get(PartialContract::class)
+                    $this->getContainer()->get(ThemeSuiteInterface::class),
+                    $this->getContainer()->get(PartialManagerInterface::class)
                 );
             }
         );
@@ -147,8 +140,8 @@ class ThemeSuiteServiceProvider extends ServiceProvider
             ArticleHeaderPartial::class,
             function () {
                 return new ArticleHeaderPartial(
-                    $this->getContainer()->get(ThemeSuiteContract::class),
-                    $this->getContainer()->get(PartialContract::class)
+                    $this->getContainer()->get(ThemeSuiteInterface::class),
+                    $this->getContainer()->get(PartialManagerInterface::class)
                 );
             }
         );
@@ -156,8 +149,8 @@ class ThemeSuiteServiceProvider extends ServiceProvider
             ArticleTitlePartial::class,
             function () {
                 return new ArticleTitlePartial(
-                    $this->getContainer()->get(ThemeSuiteContract::class),
-                    $this->getContainer()->get(PartialContract::class)
+                    $this->getContainer()->get(ThemeSuiteInterface::class),
+                    $this->getContainer()->get(PartialManagerInterface::class)
                 );
             }
         );
@@ -165,8 +158,8 @@ class ThemeSuiteServiceProvider extends ServiceProvider
             NavMenuPartial::class,
             function () {
                 return new NavMenuPartial(
-                    $this->getContainer()->get(ThemeSuiteContract::class),
-                    $this->getContainer()->get(PartialContract::class)
+                    $this->getContainer()->get(ThemeSuiteInterface::class),
+                    $this->getContainer()->get(PartialManagerInterface::class)
                 );
             }
         );
@@ -176,7 +169,7 @@ class ThemeSuiteServiceProvider extends ServiceProvider
      * Déclaration de la collection de pilote de metaboxes.
      *
      * @return void
-     */
+     * /
     public function registerMetaboxDrivers(): void
     {
         $this->getContainer()->share(
@@ -234,4 +227,5 @@ class ThemeSuiteServiceProvider extends ServiceProvider
             }
         );
     }
+    /**/
 }

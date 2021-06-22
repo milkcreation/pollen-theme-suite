@@ -1,17 +1,21 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pollen\ThemeSuite\Adapters;
 
-use Pollen\ThemeSuite\Contracts\ThemeSuiteContract;
+use RuntimeException;
 
 class WordpressAdapter extends AbstractThemeSuiteAdapter
 {
     /**
-     * @param ThemeSuiteContract $themeSuiteManager
+     * @inheritDoc
      */
-    public function __construct(ThemeSuiteContract $themeSuiteManager)
+    public function boot(): void
     {
-        parent::__construct($themeSuiteManager);
+        if (!function_exists('add_action')) {
+            throw new RuntimeException('Wordpress add_action function is missing.');
+        }
 
         add_action('init', function () {
             add_image_size('composing-header', 1920, 999999, false);

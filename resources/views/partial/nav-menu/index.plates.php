@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Partial\PartialViewInterface $this
+ * @var Pollen\Partial\PartialTemplate $this
  */
 ?>
 <nav <?php echo $this->htmlAttrs(); ?>>
